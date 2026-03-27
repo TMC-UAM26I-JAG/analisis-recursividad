@@ -281,12 +281,43 @@ def ejecutar_busqueda(arreglo: list[int], objetivo: int) -> None:
     print(f"Indice encontrado: {resultado}")
     print(f"Total de llamadas: {total_llamadas}")
 
+import csv
 
 if __name__ == "__main__":
-    ejecutar_fibonacci(6)
 
-    print("\n" + "#" * 70 + "\n")
+    tamanos_n = range(1, 21) 
+    
+    llamadas_fibo_simple = []
+    llamadas_fibo_memo = []
+    llamadas_busqueda = []
 
-    arreglo_prueba = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-    objetivo_prueba = 6
-    ejecutar_busqueda(arreglo_prueba, objetivo_prueba)
+    print("Calculando datos para Excel...")
+
+    for n in tamanos_n:
+        _, _, total_fibo = fibonacci_recursivo(n)
+        llamadas_fibo_simple.append(total_fibo)
+
+        _, _, total_memo = fibonacci_recursivo_memoria(n)
+        llamadas_fibo_memo.append(total_memo)
+
+        arreglo_prueba = list(range(1, n + 1))
+        _, _, total_busqueda = busqueda_binaria_arbol(arreglo_prueba, n + 1, 0, len(arreglo_prueba) - 1)
+        llamadas_busqueda.append(total_busqueda)
+
+    # Crear el archivo CSV para Excel
+    nombre_archivo = "datos_algoritmos.csv"
+
+    with open(nombre_archivo, mode='w', newline='') as archivo_csv:
+        escritor = csv.writer(archivo_csv)
+        
+        # Escribiemdo los títulos para los 3 casos
+        escritor.writerow(['Fibonacci Simple', 'Fibonacci Memoria', 'Búsqueda Binaria'])
+
+        for i in range(len(tamanos_n)):
+            escritor.writerow([
+                llamadas_fibo_simple[i], 
+                llamadas_fibo_memo[i], 
+                llamadas_busqueda[i]
+            ])
+
+    print(f"Listo Se ha creado el archivo '{nombre_archivo}'.")
